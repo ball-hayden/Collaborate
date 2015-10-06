@@ -1,0 +1,39 @@
+{
+  "name": "ot",
+  "description": "Collaborative editing using operational transformation",
+  "keywords": [
+    "operational transformation"
+  ],
+  "version": "0.0.15",
+  "author": "Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)",
+  "homepage": "http://operational-transformation.github.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/operational-transformation/ot.js"
+  },
+  "bugs": {
+    "url": "https://github.com/operational-transformation/ot.js/issues"
+  },
+  "main": "./lib/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "socket.io": "1.2.1",
+    "grunt": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-qunit": "*",
+    "grunt-contrib-nodeunit": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-connect": "*"
+  },
+  "scripts": {
+    "test": "grunt jshint nodeunit qunit"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/github.com/operational-transformation/ot.js/raw/master/LICENSE"
+    }
+  ]
+}

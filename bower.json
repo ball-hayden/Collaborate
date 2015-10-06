@@ -1,0 +1,13 @@
+{
+  "name": "Collaborate",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ball-hayden/Collaborate",
+  "authors": [
+    "Hayden Ball <hayden@haydenball.me.uk>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "ot": "~0.0.15"
+  }
+}

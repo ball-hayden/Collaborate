@@ -1,0 +1,17 @@
+{
+  "name": "ot",
+  "version": "0.0.15",
+  "main": "./dist/ot.js",
+  "dependencies": {},
+  "homepage": "https://github.com/Operational-Transformation/ot.js",
+  "_release": "0.0.15",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.15",
+    "commit": "65b3f1d5a1a79f46a45eb2ceae6bcb67e4ea6bca"
+  },
+  "_source": "git://github.com/Operational-Transformation/ot.js.git",
+  "_target": "~0.0.15",
+  "_originalSource": "ot",
+  "_direct": true
+}
