@@ -1,0 +1,30 @@
+AllCops:
+  Exclude:
+    - bin/*
+    - db/schema.rb
+    - db/migrate/*
+
+# Controllers don't necessarily need documentation for the class...
+Documentation:
+  Exclude:
+    - app/controllers/**/*
+    - app/mailers/*
+    - config/**/*
+    - previews/*
+
+LineLength:
+  Enabled: false
+
+RedundantReturn:
+  Enabled: false
+
+SingleLineBlockParams:
+  Enabled: false
+
+SingleSpaceBeforeFirstArg:
+  Enabled: false
+
+# This should be done on a line by line basis
+#
+# RescueException:
+#   Enabled: false
