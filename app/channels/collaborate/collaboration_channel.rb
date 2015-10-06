@@ -1,15 +1,25 @@
 module Collaborate
   # An ActionCable channel for collaboration
   class CollaborationChannel < ApplicationCable::Channel
+    attr_reader :client_id
+
+    def subscribed
+      @client_id = SecureRandom.uuid
+
+      transmit action: 'subscribed', client_id: client_id
+    end
+
     # Set the document this client is working on
     def document(data)
       @document = document_type.find(data['id'])
 
-      Rails.logger.debug "Set document to #{@document}"
+      stream_from "collaborate.documents.#{@document.id}.operations"
     end
 
-    def transform(data)
-      @document.transform(data)
+    def operation(data)
+      @document.applyOperation(data)
+
+      ActionCable.server.broadcast "collaborate.documents.#{@document.id}.operations", data
     end
 
     private
