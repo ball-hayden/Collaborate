@@ -1,10 +1,10 @@
 window.Collaborate.Events = class Events
-  _listeners: []
-
   constructor: (object) ->
-    object.on = @on
-    object.off = @off
-    object.trigger = @trigger
+    @_listeners = []
+
+    object.on = @on.bind(object)
+    object.off = @off.bind(object)
+    object.trigger = @trigger.bind(object)
 
   on: (eventName, callback) =>
     @_listeners[eventName] ||= []

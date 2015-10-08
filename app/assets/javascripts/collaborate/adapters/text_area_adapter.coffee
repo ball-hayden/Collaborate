@@ -1,5 +1,5 @@
 window.Collaborate.Adapters.TextAreaAdapter = class TextAreaAdapter
-  constructor: (@collaborate, textarea) ->
+  constructor: (@collaborativeAttribute, textarea) ->
     @$textarea = $(textarea)
 
     @oldContent = @$textarea.val()
@@ -7,7 +7,7 @@ window.Collaborate.Adapters.TextAreaAdapter = class TextAreaAdapter
     for eventName in ['keyup', 'cut', 'paste']
       @$textarea.on eventName, @textChange
 
-    @collaborate.on 'remoteOperation', @applyRemoveOperation
+    @collaborativeAttribute.on 'remoteOperation', @applyRemoveOperation
 
   # Called when the textarea has changed.
   #
@@ -20,7 +20,7 @@ window.Collaborate.Adapters.TextAreaAdapter = class TextAreaAdapter
 
     @oldContent = newContent
 
-    @collaborate.localOperation(operation)
+    @collaborativeAttribute.localOperation(operation)
 
   # Generate an OT operation from the change in text.
   #

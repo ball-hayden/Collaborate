@@ -3,6 +3,10 @@
 
 cable = Cable.createConsumer "ws://localhost:28080"
 
-collaborate = new Collaborate(cable, 'DocumentChannel', documentId, 'body')
+collaborate = new Collaborate(cable, 'DocumentChannel', documentId)
 
-new Collaborate.Adapters.TextAreaAdapter(collaborate, '#body')
+collaborativeBody = collaborate.addAttribute('body')
+new Collaborate.Adapters.TextAreaAdapter(collaborativeBody, '#body')
+
+collaborativeTitle = collaborate.addAttribute('title')
+new Collaborate.Adapters.TextAreaAdapter(collaborativeTitle, '#title')

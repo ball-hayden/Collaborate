@@ -1,10 +1,14 @@
 Collaborate.Cable = class Cable
   unackedOps: []
+  attributeCables: {}
 
-  constructor: (@collaborate, cable, channel, @attribute) ->
+  constructor: (@collaborate, cable, channel) ->
     @subscription = cable.subscriptions.create channel,
       connected: @connected
       received: @received
+
+  addAttribute: (attribute, attributeCable) =>
+    @attributeCables[attribute] = attributeCable
 
   connected: =>
     # This shouldn't be necessary, but ActionCable doesn't seem to be able
@@ -28,9 +32,7 @@ Collaborate.Cable = class Cable
 
   sendOperation: (data) =>
     data.client_id = @clientId
-    data.attribute = @attribute
 
-    @unackedOps.push data.version
     @subscription.perform 'operation', data
 
   subscribed: (data) ->
@@ -39,18 +41,4 @@ Collaborate.Cable = class Cable
     console.debug "Set client ID as #{@clientId}"
 
   receiveOperation: (data) =>
-    console.debug "Receive operation #{data.operation.toString()}"
-    console.debug "Document Version: #{data.version}"
-
-    data.operation = ot.TextOperation.fromJSON(data.operation)
-
-    if data.client_id == @clientId
-      ackIndex = @unackedOps.indexOf(data.version)
-      if ackIndex > -1
-        @unackedOps.splice(ackIndex, 1)
-        @collaborate.receiveAck data
-      else
-        console.warn "Operation #{data.verion} reAcked"
-
-    else
-      @collaborate.remoteOperation data
+    @attributeCables[data.attribute].receiveOperation(data)
