@@ -28,14 +28,14 @@ Collaborate.AttributeCable = class Cable
       @receiveRemoteOperation(data)
 
   receiveAck: (data) =>
-    ackIndex = @unackedOps.indexOf(data.version)
+    ackIndex = @unackedOps.indexOf(data.sent_version)
     if ackIndex > -1
       @unackedOps.splice(ackIndex, 1)
       @collaborativeAttribute.receiveAck data
     else
-      console.warn "Operation #{data.verion} reAcked"
+      console.warn "Operation #{data.sent_version} reAcked"
 
   receiveRemoteOperation: (data) =>
-    @version = data.version if data.version > @version
+    @version = data.version
 
     @collaborativeAttribute.remoteOperation data
