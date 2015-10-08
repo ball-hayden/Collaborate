@@ -1,9 +1,7 @@
 Collaborate.Cable = class Cable
   unackedOps: []
 
-  constructor: (collaborate, cable, channel) ->
-    @collaborate = collaborate
-
+  constructor: (@collaborate, cable, channel, @attribute) ->
     @subscription = cable.subscriptions.create channel,
       connected: @connected
       received: @received
@@ -17,7 +15,7 @@ Collaborate.Cable = class Cable
     , 1000
 
   received: (data) =>
-    console.debug "Received data in solution channel"
+    console.debug "Received data in document channel"
 
     switch data.action
       when 'subscribed'
@@ -30,6 +28,7 @@ Collaborate.Cable = class Cable
 
   sendOperation: (data) =>
     data.client_id = @clientId
+    data.attribute = @attribute
 
     @unackedOps.push data.version
     @subscription.perform 'operation', data

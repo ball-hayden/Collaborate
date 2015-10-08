@@ -17,7 +17,7 @@ module Collaborate
     end
 
     def operation(data)
-      @document.applyOperation(data)
+      @document.apply_operation(data)
 
       ActionCable.server.broadcast "collaborate.documents.#{@document.id}.operations", data
     end

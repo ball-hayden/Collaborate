@@ -1,12 +1,14 @@
 window.Collaborate = class Collaborate
-  constructor: (cable, channel, documentId) ->
+  constructor: (cable, channel, documentId, @attribute) ->
+    throw new Exception('You must specify an attribute to collaboratively edit') unless @attribute
+
     new Collaborate.Events(this)
 
     @documentId = documentId
 
     @documentVersion = 0
 
-    @cable = new Collaborate.Cable(@, cable, channel)
+    @cable = new Collaborate.Cable(@, cable, channel, @attribute)
     @state = new Synchronized(this)
 
   localOperation: (operation) =>
@@ -53,8 +55,10 @@ window.Collaborate = class Collaborate
       @operation = operation
 
     localOperation: (operation) =>
-      @buffer ||= new ot.TextOperation()
-      @buffer.compose(operation)
+      if @buffer
+        @buffer.compose(operation)
+      else
+        @buffer = operation
 
     receiveAck: (data) =>
       unless @buffer
