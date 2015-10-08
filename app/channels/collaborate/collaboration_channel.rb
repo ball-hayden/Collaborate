@@ -19,6 +19,8 @@ module Collaborate
     def operation(data)
       @document.apply_operation(data)
 
+      sleep 1
+
       ActionCable.server.broadcast "collaborate.documents.#{@document.id}.operations", data
     end
 

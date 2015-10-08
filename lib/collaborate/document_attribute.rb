@@ -5,14 +5,25 @@ module Collaborate
     def initialize(document, attribute)
       @document = document
       @attribute = attribute
+
+      @operations = []
     end
 
-    def apply_operation(operation)
+    # Based on https://github.com/Operational-Transformation/ot.js/blob/15d4e7/lib/server.js#L16
+    def apply_operation(operation, version)
+      if version <= @operations.length
+        operation = transform_old_operation(operation, version)
+      end
+
       document.send "#{attribute}=", new_text(operation)
+
+      @operations << operation
+
+      return @operations.length
     end
 
     def value
-      Rails.cache.read(cache_key) || document.attributes[attribute]
+      Rails.cache.read(cache_key) || document.attributes[attribute.to_s]
     end
 
     def value=(value)
@@ -31,6 +42,16 @@ module Collaborate
 
     def new_text(operation)
       operation.apply value
+    end
+
+    def transform_old_operation(operation, version)
+      concurrent_operations = @operations.slice(version, @operations.length - version)
+
+      concurrent_operations.each do |other_operation|
+        operation = OT::TextOperation.transform(operation, other_operation).first
+      end
+
+      return operation
     end
   end
 end

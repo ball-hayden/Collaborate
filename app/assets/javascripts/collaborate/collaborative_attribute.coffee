@@ -7,20 +7,14 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
     @documentId = @collaborate.documentId
     @cable = new Collaborate.AttributeCable @, @collaborate.cable, @attribute
 
-    @documentVersion = 0
     @state = new Synchronized(this)
 
   localOperation: (operation) =>
     return if operation.isNoop()
 
-    @documentVersion++
     @state.localOperation(operation)
 
   remoteOperation: (data) =>
-    throw new Error('Received out of sequence operation') unless data.version == (@documentVersion + 1)
-
-    @documentVersion++
-
     @state.remoteOperation(data)
 
     @trigger 'remoteOperation', data.operation
@@ -28,6 +22,7 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
   receiveAck: (data) =>
     @state.receiveAck(data)
 
+  # States based around https://github.com/Operational-Transformation/ot.js/blob/15d4e7f/lib/client.js#L63
   class State
     constructor: (collaborativeAttribute) ->
       @collaborativeAttribute = collaborativeAttribute
@@ -36,7 +31,6 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
     localOperation: (operation) =>
       @collaborativeAttribute.cable.sendOperation
         operation: operation
-        version: @collaborativeAttribute.documentVersion
 
       @collaborativeAttribute.state = new AwaitingAck(@collaborativeAttribute, operation)
 
@@ -48,27 +42,14 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
       # happily
 
   class AwaitingAck extends State
-    constructor: (collaborativeAttribute, operation) ->
+    constructor: (collaborativeAttribute, @operation) ->
       super
 
-      @operation = operation
-
     localOperation: (operation) =>
-      if @buffer
-        @buffer.compose(operation)
-      else
-        @buffer = operation
+      @collaborativeAttribute.state = new AwaitingWithBuffer(@collaborativeAttribute, @operation, operation)
 
     receiveAck: (data) =>
-      unless @buffer
-        @collaborativeAttribute.state = new Synchronized(@collaborativeAttribute)
-        return
-
-      @operation = @buffer
-
-      @collaborativeAttribute.cable.sendOperation
-        operation: operation
-        version: @collaborativeAttribute.documentVersion
+      @collaborativeAttribute.state = new Synchronized(@collaborativeAttribute)
 
     remoteOperation: (data) =>
       # Ok. We have something to do...
@@ -79,11 +60,27 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
       @operation = pair[0]
       data.operation = pair[1]
 
-      # If we have no buffer, we can apply return the new received operation and
-      # continue.
-      return unless @buffer
+  class AwaitingWithBuffer extends State
+    constructor: (collaborativeAttribute, @operation, @buffer) ->
+      super
 
-      # If we have a buffer, let's transform again
+    localOperation: (operation) =>
+      @buffer = @buffer.compose(operation)
+
+    receiveAck: (data) =>
+      @collaborativeAttribute.cable.sendOperation
+        operation: @buffer
+
+      @collaborativeAttribute.state = new AwaitingAck(@collaborativeAttribute, @buffer)
+
+    remoteOperation: (data) =>
+      # First, transform our pending operation and the received operation
+      pair = ot.TextOperation.transform(@operation, data.operation)
+
+      @operation = pair[0]
+      data.operation = pair[1]
+
+      # Transform again...
       pair = ot.TextOperation.transform(@buffer, data.operation)
 
       @buffer = pair[0]

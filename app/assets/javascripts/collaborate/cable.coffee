@@ -19,8 +19,6 @@ Collaborate.Cable = class Cable
     , 1000
 
   received: (data) =>
-    console.debug "Received data in document channel"
-
     switch data.action
       when 'subscribed'
         @subscribed(data)
