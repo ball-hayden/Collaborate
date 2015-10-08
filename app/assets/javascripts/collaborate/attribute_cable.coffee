@@ -20,7 +20,7 @@ Collaborate.AttributeCable = class Cable
   receiveOperation: (data) =>
     data.operation = ot.TextOperation.fromJSON(data.operation)
 
-    console.debug "Receive #{@attribute} version #{data.version}: #{data.operation.toString()}"
+    console.debug "Receive #{@attribute} version #{data.version}: #{data.operation.toString()} from #{data.client_id}"
 
     if data.client_id == @cable.clientId
       @receiveAck(data)
@@ -36,8 +36,6 @@ Collaborate.AttributeCable = class Cable
       console.warn "Operation #{data.verion} reAcked"
 
   receiveRemoteOperation: (data) =>
-    throw new Error('Received out of sequence operation') unless data.version == (@version + 1)
-
-    @version = data.version
+    @version = data.version if data.version > @version
 
     @collaborativeAttribute.remoteOperation data

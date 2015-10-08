@@ -58,5 +58,12 @@ window.Collaborate.Adapters.TextAreaAdapter = class TextAreaAdapter
 
   applyRemoveOperation: (operation) =>
     content = operation.apply(@oldContent)
+
+    selectionStart = @$textarea[0].selectionStart
+    selectionEnd = @$textarea[0].selectionEnd
+
     @$textarea.val(content)
+
+    @$textarea[0].setSelectionRange(selectionStart, selectionEnd)
+
     @oldContent = content
