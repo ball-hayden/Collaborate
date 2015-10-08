@@ -7,9 +7,7 @@ module Collaborate
       def collaborative_attributes(*attributes)
         return @collaborative_attributes if attributes.size == 0
 
-        @collaborative_attributes = ActiveSupport::HashWithIndifferentAccess[attributes.map do |attribute|
-          [attribute, DocumentAttribute.new(self, attribute)]
-        end]
+        @collaborative_attributes = attributes
 
         bind_collaborative_document_attributes
       end
@@ -17,35 +15,42 @@ module Collaborate
       private
 
       def bind_collaborative_document_attributes
-        collaborative_attributes.each do |_attribute, collaborate_attribute|
-          bind_collaborative_document_attribute(collaborate_attribute)
+        collaborative_attributes.each do |attribute|
+          bind_collaborative_document_attribute(attribute)
         end
       end
 
-      def bind_collaborative_document_attribute(collaborate_attribute)
-        define_method("#{collaborate_attribute.attribute}") do
-          Rails.cache.read(collaborate_attribute.collaborate_attribute_cache_key(id)) || super()
+      def bind_collaborative_document_attribute(attribute)
+        define_method("#{attribute}") do
+          collaborative_attribute(attribute).value
         end
 
-        define_method("#{collaborate_attribute.attribute}=") do |value|
+        define_method("#{attribute}=") do |value|
           super(value)
 
-          Rails.cache.write(collaborate_attribute.collaborate_attribute_cache_key(id), value)
+          collaborative_attribute(attribute).value = value
         end
       end
+    end
+
+    def collaborative_attribute(attribute_name)
+      @collaborative_attributes ||= {}
+      attribute = @collaborative_attributes[attribute_name]
+
+      return attribute if attribute.present?
+
+      @collaborative_attributes[attribute_name] = DocumentAttribute.new(self, attribute_name)
     end
 
     def apply_operation(data)
       operation = OT::TextOperation.from_a data['operation']
       attribute = data['attribute']
 
-      self.class.collaborative_attributes[attribute].apply_operation(self, operation)
+      collaborative_attribute(attribute).apply_operation(operation)
     end
 
     def clear_collaborate_cache(attribute)
-      collaborate_attribute = self.class.collaborative_attributes[attribute]
-
-      Rails.cache.delete(collaborate_attribute.collaborate_attribute_cache_key(id))
+      collaborative_attribute(attribute).clear_cache
     end
   end
 end
