@@ -19,10 +19,11 @@ module Collaborate
     end
 
     def operation(data)
-      version = @document.apply_operation(data)
+      version, operation = @document.apply_operation(data)
 
       data['sent_version'] = data['version']
       data['version'] = version
+      data['operation'] = operation.to_a
 
       sleep 3
 

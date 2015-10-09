@@ -10,18 +10,18 @@ module Collaborate
     end
 
     # Based on https://github.com/Operational-Transformation/ot.js/blob/15d4e7/lib/server.js#L16
-    def apply_operation(operation, version)
-      Rails.logger.debug "Applying version #{version}, operations length: #{operations.length}"
+    def apply_operation(operation, client_version)
+      Rails.logger.debug "Applying client version #{client_version}, server version: #{version}"
 
-      if version <= operations.length
-        operation = transform_old_operation(operation, version)
+      unless client_version > operations.length
+        operation = transform_old_operation(operation, client_version)
       end
 
       store_operation(operation)
 
       document.send "#{attribute}=", new_text(operation)
 
-      return version
+      return version, operation
     end
 
     def version
@@ -66,8 +66,9 @@ module Collaborate
       operation.apply value
     end
 
-    def transform_old_operation(operation, version)
-      concurrent_operations = operations.slice(version - 1, operations.length - version + 1)
+    def transform_old_operation(operation, client_version)
+      server_version = version
+      concurrent_operations = operations.slice(client_version - 1, server_version - client_version + 1)
 
       concurrent_operations.each do |other_operation|
         operation = OT::TextOperation.transform(operation, other_operation).first

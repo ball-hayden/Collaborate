@@ -22,6 +22,7 @@ Collaborate.AttributeCable = class Cable
 
   receiveOperation: (data) =>
     data.operation = ot.TextOperation.fromJSON(data.operation)
+    @version = data.version
 
     console.debug "Receive #{@attribute} version #{data.version}: #{data.operation.toString()} from #{data.client_id}"
 
@@ -39,6 +40,4 @@ Collaborate.AttributeCable = class Cable
       console.warn "Operation #{data.sent_version} reAcked"
 
   receiveRemoteOperation: (data) =>
-    @version = data.version
-
     @collaborativeAttribute.remoteOperation data
