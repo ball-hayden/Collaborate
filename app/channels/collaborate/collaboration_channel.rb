@@ -25,8 +25,6 @@ module Collaborate
       data['version'] = version
       data['operation'] = operation.to_a
 
-      sleep 3
-
       ActionCable.server.broadcast "collaborate.documents.#{@document.id}.operations", data
     end
 
