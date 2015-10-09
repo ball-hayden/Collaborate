@@ -13,7 +13,7 @@ gemspec
 # As ActionCable is still unstable, let's use master:
 gem 'actioncable', github: 'rails/actioncable'
 
-group :development do
+group :development, :test do
   gem 'byebug'
 
   # For dummy app
@@ -22,4 +22,8 @@ group :development do
   gem 'jquery-rails'
 
   gem 'puma'
+end
+
+group :test do
+  gem 'simplecov'
 end

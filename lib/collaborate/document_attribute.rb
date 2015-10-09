@@ -29,10 +29,12 @@ module Collaborate
     end
 
     def value
-      Rails.cache.read(value_key) || document.attributes[attribute.to_s]
+      cached_value || document.attributes[attribute.to_s]
     end
 
     def value=(value)
+      return unless document.persisted?
+
       Rails.cache.write(value_key, value)
     end
 
@@ -48,6 +50,12 @@ module Collaborate
 
     def value_key
       "collaborate-#{document.class}-#{document.id}-#{attribute}"
+    end
+
+    def cached_value
+      return unless document.persisted?
+
+      Rails.cache.read(value_key)
     end
 
     def operations_key

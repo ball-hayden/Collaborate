@@ -25,10 +25,6 @@ module Collaborate
       end
 
       def bind_collaborative_document_attribute(attribute)
-        define_method("#{attribute}") do
-          collaborative_attribute(attribute).value
-        end
-
         define_method("#{attribute}=") do |value|
           super(value)
 
@@ -49,7 +45,7 @@ module Collaborate
       collaborative_attribute(attribute).apply_operation(operation, version)
     end
 
-    def clear_collaborate_cache(attribute)
+    def clear_collaborative_cache(attribute)
       collaborative_attribute(attribute).clear_cache
     end
 
