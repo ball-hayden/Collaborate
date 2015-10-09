@@ -3,11 +3,15 @@ module Collaborate
   module Document
     extend ActiveSupport::Concern
 
+    included do
+      after_initialize :setup_collaborative_attributes
+    end
+
     class_methods do
       def collaborative_attributes(*attributes)
         return @collaborative_attributes if attributes.size == 0
 
-        @collaborative_attributes = attributes
+        @collaborative_attributes = attributes.map(&:to_s)
 
         bind_collaborative_document_attributes
       end
@@ -34,12 +38,7 @@ module Collaborate
     end
 
     def collaborative_attribute(attribute_name)
-      @collaborative_attributes ||= {}
-      attribute = @collaborative_attributes[attribute_name]
-
-      return attribute if attribute.present?
-
-      @collaborative_attributes[attribute_name] = DocumentAttribute.new(self, attribute_name)
+      @collaborative_attributes[attribute_name.to_s]
     end
 
     def apply_operation(data)
@@ -52,6 +51,16 @@ module Collaborate
 
     def clear_collaborate_cache(attribute)
       collaborative_attribute(attribute).clear_cache
+    end
+
+    private
+
+    def setup_collaborative_attributes
+      @collaborative_attributes = {}
+
+      self.class.collaborative_attributes.each do |attribute|
+        @collaborative_attributes[attribute] = DocumentAttribute.new(self, attribute)
+      end
     end
   end
 end

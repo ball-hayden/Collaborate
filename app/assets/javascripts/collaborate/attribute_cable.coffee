@@ -6,6 +6,9 @@ Collaborate.AttributeCable = class Cable
   constructor: (@collaborativeAttribute, @cable, @attribute) ->
     @cable.addAttribute(@attribute, @)
 
+  receiveAttribute: (data) =>
+    @version = data.version
+
   sendOperation: (data) =>
     @version++
 

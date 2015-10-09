@@ -22,6 +22,8 @@ Collaborate.Cable = class Cable
     switch data.action
       when 'subscribed'
         @subscribed(data)
+      when 'attribute'
+        @receiveAttribute(data)
       when 'operation'
         @receiveOperation(data)
       else
@@ -37,6 +39,12 @@ Collaborate.Cable = class Cable
     @clientId = data.client_id
 
     console.debug "Set client ID as #{@clientId}"
+
+  receiveAttribute: (data) =>
+    attributeCable = @attributeCables[data.attribute]
+    return unless attributeCable
+
+    attributeCable.receiveAttribute(data)
 
   receiveOperation: (data) =>
     @attributeCables[data.attribute].receiveOperation(data)

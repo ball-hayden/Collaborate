@@ -21,7 +21,11 @@ module Collaborate
 
       document.send "#{attribute}=", new_text(operation)
 
-      return operations.length
+      return version
+    end
+
+    def version
+      operations.length
     end
 
     def value
