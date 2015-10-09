@@ -19,7 +19,7 @@ module Collaborate
 
       store_operation(operation)
 
-      document.send "#{attribute}=", new_text(operation)
+      self.value = new_text(operation)
 
       return version, operation
     end

@@ -25,9 +25,11 @@ module Collaborate
       end
 
       def bind_collaborative_document_attribute(attribute)
-        define_method("#{attribute}=") do |value|
-          super(value)
+        define_method("collaborative_#{attribute}") do
+          collaborative_attribute(attribute).value
+        end
 
+        define_method("collaborative_#{attribute}=") do |value|
           collaborative_attribute(attribute).value = value
         end
       end
@@ -56,12 +58,6 @@ module Collaborate
 
       self.class.collaborative_attributes.each do |attribute|
         @collaborative_attributes[attribute] = DocumentAttribute.new(self, attribute)
-
-        # Mark any cached attributes as dirty
-        attribute_value = collaborative_attribute(attribute).value
-        if attribute_value != attributes[attribute]
-          send("#{attribute}=", attribute_value)
-        end
       end
     end
   end

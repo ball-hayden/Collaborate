@@ -9,32 +9,22 @@ module Collaborate
       expect(example_class.collaborative_attributes).to match_array ['title', 'body']
     end
 
-    it 'should override setters for collaborative_attributes' do
+    it 'should define getters for collaborative_attributes' do
+      expect(example_instance).to receive_message_chain(:collaborative_attribute, value: 'Test')
+      expect(example_instance.collaborative_body).to eq 'Test'
+    end
+
+    it 'should define setters for collaborative_attributes' do
       expect(example_instance).to receive_message_chain(:collaborative_attribute, :'value=')
-      example_instance.body = 'something'
+      example_instance.collaborative_body = 'something'
     end
 
     it 'should update the cache following an update_attribute / update_attributes' do
       example_instance.update_attribute(:body, 'Test Body')
-      expect(example_instance.body).to eq 'Test Body'
+      expect(example_instance.collaborative_body).to eq 'Test Body'
 
       example_instance.update_attributes(body: 'Another Body')
-      expect(example_instance.body).to eq 'Another Body'
-    end
-
-    it 'should mark any attributes which have cached changes as dirty' do
-      example_instance.update_attribute(:body, 'Test Body')
-
-      example_instance.body = 'Another Body'
-      example_instance.reload
-
-      expect(example_instance.body).to eq 'Another Body'
-      expect(example_instance.body_changed?).to eq true
-
-      example_instance.clear_collaborative_cache(:body)
-      example_instance.reload
-
-      expect(example_instance.body).to eq 'Test Body'
+      expect(example_instance.collaborative_body).to eq 'Another Body'
     end
   end
 end
