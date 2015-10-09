@@ -60,6 +60,12 @@ module Collaborate
 
       self.class.collaborative_attributes.each do |attribute|
         @collaborative_attributes[attribute] = DocumentAttribute.new(self, attribute)
+
+        # Mark any cached attributes as dirty
+        attribute_value = collaborative_attribute(attribute).value
+        if attribute_value != attributes[attribute]
+          send("#{attribute}=", attribute_value)
+        end
       end
     end
   end
