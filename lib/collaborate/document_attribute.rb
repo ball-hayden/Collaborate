@@ -29,7 +29,7 @@ module Collaborate
     end
 
     def value
-      cached_value || document.attributes[attribute.to_s]
+      cached_value || document.attributes[attribute.to_s] || ''
     end
 
     def value=(value)
