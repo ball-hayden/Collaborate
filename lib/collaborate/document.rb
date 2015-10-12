@@ -47,9 +47,9 @@ module Collaborate
     end
 
     def apply_operation(data)
-      operation = OT::TextOperation.from_a data['operation']
-      attribute = data['attribute']
-      version   = data['version']
+      operation = OT::TextOperation.from_a data[:operation]
+      attribute = data[:attribute]
+      version   = data[:version]
 
       collaborative_attribute(attribute).apply_operation(operation, version)
     end

@@ -19,11 +19,13 @@ module Collaborate
     end
 
     def operation(data)
+      data = ActiveSupport::HashWithIndifferentAccess.new(data)
+
       version, operation = @document.apply_operation(data)
 
-      data['sent_version'] = data['version']
-      data['version'] = version
-      data['operation'] = operation.to_a
+      data[:sent_version] = data[:version]
+      data[:version] = version
+      data[:operation] = operation.to_a
 
       ActionCable.server.broadcast "collaborate.documents.#{@document.id}.operations", data
     end

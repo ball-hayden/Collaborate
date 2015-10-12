@@ -13,7 +13,7 @@ module Collaborate
     def apply_operation(operation, client_version)
       Rails.logger.debug "Applying client version #{client_version}, server version: #{version}"
 
-      unless client_version > operations.length
+      unless client_version > version
         operation = transform_old_operation(operation, client_version)
       end
 
@@ -29,7 +29,7 @@ module Collaborate
     end
 
     def value
-      cached_value || document.attributes[attribute.to_s] || ''
+      cached_value || document.attributes[attribute.to_s]
     end
 
     def value=(value)
@@ -71,7 +71,7 @@ module Collaborate
     end
 
     def new_text(operation)
-      operation.apply value
+      operation.apply(value || '')
     end
 
     def transform_old_operation(operation, client_version)

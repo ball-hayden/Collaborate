@@ -37,5 +37,23 @@ module Collaborate
 
       expect(example_instance.body).to eq 'A test body'
     end
+
+    it 'should allow me to apply an OT operation to an attribute' do
+      example_instance.apply_operation(
+        version: 1,
+        operation: ['test'],
+        attribute: 'body'
+      )
+
+      expect(example_instance.collaborative_body).to eq 'test'
+    end
+
+    it 'should allow me to clear the collaborative cache' do
+      example_instance.collaborative_body = 'test'
+
+      example_instance.clear_collaborative_cache(:body)
+
+      expect(example_instance.collaborative_body).to be_nil
+    end
   end
 end

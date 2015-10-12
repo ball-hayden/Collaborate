@@ -19,7 +19,27 @@ module Collaborate
       it 'should not attempt to read a cached value' do
         expect(Rails.cache).to_not receive(:read)
 
-        expect(example_document.body).to be_nil
+        expect(example_attribute.value).to be_nil
+        expect(example_document.collaborative_body).to be_nil
+      end
+    end
+
+    context 'applying OT operations' do
+      let(:operation1) { OT::TextOperation.new.insert('test') }
+      let(:operation2) { OT::TextOperation.new.insert('this is a ') }
+
+      it 'should apply a simple operation' do
+        example_attribute.apply_operation(operation1, 1)
+
+        expect(example_attribute.value).to eq 'test'
+      end
+
+      it "should transform a client's operation when necessary" do
+        example_attribute.apply_operation(operation1, 1)
+
+        example_attribute.apply_operation(operation2, 1)
+
+        expect(example_attribute.value).to eq 'this is a test'
       end
     end
   end
