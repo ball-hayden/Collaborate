@@ -32,6 +32,13 @@ module Collaborate
         define_method("collaborative_#{attribute}=") do |value|
           collaborative_attribute(attribute).value = value
         end
+
+        # Override the normal setter so that we can update our cache
+        define_method("#{attribute}=") do |value|
+          super(value)
+
+          collaborative_attribute(attribute).value = value
+        end
       end
     end
 

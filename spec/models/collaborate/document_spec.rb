@@ -26,5 +26,16 @@ module Collaborate
       example_instance.update_attributes(body: 'Another Body')
       expect(example_instance.collaborative_body).to eq 'Another Body'
     end
+
+    it 'should allow me to persist collaborative attributes' do
+      example_instance.collaborative_body = 'A test body'
+
+      example_instance.body = example_instance.collaborative_body
+      example_instance.save!
+
+      example_instance.reload
+
+      expect(example_instance.body).to eq 'A test body'
+    end
   end
 end
