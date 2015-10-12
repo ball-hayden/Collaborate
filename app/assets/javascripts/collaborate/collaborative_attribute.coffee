@@ -1,4 +1,4 @@
-Collaborate.CollaborativeAttribute = class CollaborateAttribute
+Collaborate.CollaborativeAttribute = class CollaborativeAttribute
   constructor: (@collaborate, @attribute) ->
     throw new Exception('You must specify an attribute to collaboratively edit') unless @attribute
 
@@ -7,7 +7,7 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
     @documentId = @collaborate.documentId
     @cable = new Collaborate.AttributeCable @, @collaborate.cable, @attribute
 
-    @state = new Synchronized(this)
+    @state = new CollaborativeAttribute.Synchronized(this)
 
   localOperation: (operation) =>
     return if operation.isNoop()
@@ -27,12 +27,12 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
     constructor: (collaborativeAttribute) ->
       @collaborativeAttribute = collaborativeAttribute
 
-  class Synchronized extends State
+  class @Synchronized extends State
     localOperation: (operation) =>
       @collaborativeAttribute.cable.sendOperation
         operation: operation
 
-      @collaborativeAttribute.state = new AwaitingAck(@collaborativeAttribute, operation)
+      @collaborativeAttribute.state = new CollaborativeAttribute.AwaitingAck(@collaborativeAttribute, operation)
 
     receiveAck: (data) ->
       console.error "Received an ack for version #{data.version} whilst in Synchronized state."
@@ -41,15 +41,15 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
       # Noop. We don't need to transform the operation as it can be applied
       # happily
 
-  class AwaitingAck extends State
+  class @AwaitingAck extends State
     constructor: (collaborativeAttribute, @operation) ->
       super
 
     localOperation: (operation) =>
-      @collaborativeAttribute.state = new AwaitingWithBuffer(@collaborativeAttribute, @operation, operation)
+      @collaborativeAttribute.state = new CollaborativeAttribute.AwaitingWithBuffer(@collaborativeAttribute, @operation, operation)
 
     receiveAck: (data) =>
-      @collaborativeAttribute.state = new Synchronized(@collaborativeAttribute)
+      @collaborativeAttribute.state = new CollaborativeAttribute.Synchronized(@collaborativeAttribute)
 
     remoteOperation: (data) =>
       # Ok. We have something to do...
@@ -60,7 +60,7 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
       @operation = pair[0]
       data.operation = pair[1]
 
-  class AwaitingWithBuffer extends State
+  class @AwaitingWithBuffer extends State
     constructor: (collaborativeAttribute, @operation, @buffer) ->
       super
 
@@ -71,7 +71,7 @@ Collaborate.CollaborativeAttribute = class CollaborateAttribute
       @collaborativeAttribute.cable.sendOperation
         operation: @buffer
 
-      @collaborativeAttribute.state = new AwaitingAck(@collaborativeAttribute, @buffer)
+      @collaborativeAttribute.state = new CollaborativeAttribute.AwaitingAck(@collaborativeAttribute, @buffer)
 
     remoteOperation: (data) =>
       # First, transform our pending operation and the received operation

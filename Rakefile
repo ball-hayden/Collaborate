@@ -4,6 +4,8 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
+APP_RAKEFILE = File.expand_path('../dummy/Rakefile', __FILE__)
+
 require 'rdoc/task'
 
 RDoc::Task.new(:rdoc) do |rdoc|
@@ -14,11 +16,10 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-
-
+load 'rails/tasks/engine.rake'
 load 'rails/tasks/statistics.rake'
-
-
 
 Bundler::GemHelper.install_tasks
 
+desc 'Run the javascript specs'
+task teaspoon: 'app:teaspoon'

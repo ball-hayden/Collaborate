@@ -1,6 +1,8 @@
 #= require cable
 #= require collaborate
 
+return unless documentId?
+
 cable = Cable.createConsumer "ws://localhost:28080"
 
 collaborate = new Collaborate(cable, 'DocumentChannel', documentId)
