@@ -7,7 +7,7 @@ window.Collaborate.Adapters.TextAreaAdapter = class TextAreaAdapter
     for eventName in ['keyup', 'cut', 'paste']
       @$textarea.on eventName, @textChange
 
-    @collaborativeAttribute.on 'remoteOperation', @applyRemoveOperation
+    @collaborativeAttribute.on 'remoteOperation', @applyRemoteOperation
 
   # Called when the textarea has changed.
   #
@@ -56,7 +56,7 @@ window.Collaborate.Adapters.TextAreaAdapter = class TextAreaAdapter
 
     return op
 
-  applyRemoveOperation: (operation) =>
+  applyRemoteOperation: (operation) =>
     content = operation.apply(@oldContent)
 
     selectionStart = @$textarea[0].selectionStart
