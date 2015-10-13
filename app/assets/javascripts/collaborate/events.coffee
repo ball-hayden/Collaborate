@@ -20,5 +20,7 @@ window.Collaborate.Events = class Events
     @_listeners.splice(index, 1)
 
   trigger: (eventName, args...) =>
-    for callback in @_listeners[eventName]
+    listeners = @_listeners[eventName] || []
+
+    for callback in listeners
       callback(args...)

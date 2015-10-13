@@ -15,7 +15,7 @@ Collaborate.CollaborativeAttribute = class CollaborativeAttribute
     @state.localOperation(operation)
 
   remoteOperation: (data) =>
-    @state.remoteOperation(data)
+    @state.transformRemoteOperation(data)
 
     @trigger 'remoteOperation', data.operation
 
@@ -37,7 +37,7 @@ Collaborate.CollaborativeAttribute = class CollaborativeAttribute
     receiveAck: (data) ->
       console.error "Received an ack for version #{data.version} whilst in Synchronized state."
 
-    remoteOperation: (data) ->
+    transformRemoteOperation: (data) ->
       # Noop. We don't need to transform the operation as it can be applied
       # happily
 
@@ -51,7 +51,7 @@ Collaborate.CollaborativeAttribute = class CollaborativeAttribute
     receiveAck: (data) =>
       @collaborativeAttribute.state = new CollaborativeAttribute.Synchronized(@collaborativeAttribute)
 
-    remoteOperation: (data) =>
+    transformRemoteOperation: (data) =>
       # Ok. We have something to do...
 
       # First, transform our pending operation and the received operation
@@ -73,7 +73,7 @@ Collaborate.CollaborativeAttribute = class CollaborativeAttribute
 
       @collaborativeAttribute.state = new CollaborativeAttribute.AwaitingAck(@collaborativeAttribute, @buffer)
 
-    remoteOperation: (data) =>
+    transformRemoteOperation: (data) =>
       # First, transform our pending operation and the received operation
       pair = ot.TextOperation.transform(@operation, data.operation)
 

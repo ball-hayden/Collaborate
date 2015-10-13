@@ -18,3 +18,33 @@ describe 'CollaborativeAttribute', ->
       @collaborativeAttribute.localOperation(operation)
 
       expect(@collaborativeAttribute.state.localOperation).not.toHaveBeenCalled()
+
+    it 'should delegate localOperation to the current state', =>
+      spyOn(@collaborativeAttribute.state, 'localOperation')
+
+      operation = new ot.TextOperation()
+      operation.insert('test')
+
+      @collaborativeAttribute.localOperation(operation)
+
+      expect(@collaborativeAttribute.state.localOperation).toHaveBeenCalled()
+
+  it 'should call transformRemoteOperation on the current state', =>
+    spyOn(@collaborativeAttribute.state, 'transformRemoteOperation')
+
+    operation = new ot.TextOperation()
+    operation.insert('test')
+
+    @collaborativeAttribute.remoteOperation(operation)
+
+    expect(@collaborativeAttribute.state.transformRemoteOperation).toHaveBeenCalled()
+
+  it 'should delegate receiveAck to the current state', =>
+    spyOn(@collaborativeAttribute.state, 'receiveAck')
+
+    operation = new ot.TextOperation()
+    operation.insert('test')
+
+    @collaborativeAttribute.receiveAck(operation)
+
+    expect(@collaborativeAttribute.state.receiveAck).toHaveBeenCalled()
