@@ -1,6 +1,6 @@
 Collaborate.CollaborativeAttribute = class CollaborativeAttribute
   constructor: (@collaborate, @attribute) ->
-    throw new Exception('You must specify an attribute to collaboratively edit') unless @attribute
+    throw new Error('You must specify an attribute to collaboratively edit') unless @attribute
 
     new Collaborate.Events(this)
 

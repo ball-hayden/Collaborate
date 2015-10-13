@@ -42,9 +42,18 @@ Collaborate.Cable = class Cable
 
   receiveAttribute: (data) =>
     attributeCable = @attributeCables[data.attribute]
-    return unless attributeCable
+
+    unless attributeCable
+      console.warn "Received collaboration message for #{data.attribute}, but it has not been registered"
+      return
 
     attributeCable.receiveAttribute(data)
 
   receiveOperation: (data) =>
-    @attributeCables[data.attribute].receiveOperation(data)
+    attributeCable = @attributeCables[data.attribute]
+
+    unless attributeCable
+      console.warn "Received collaboration message for #{data.attribute}, but it has not been registered"
+      return
+
+    attributeCable.receiveOperation(data)

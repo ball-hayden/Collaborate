@@ -2,9 +2,14 @@
 
 describe 'CollaborativeAttribute', ->
   beforeEach =>
-    @cable = Cable.createConsumer "ws://localhost:28080"
-    @collaborate = new Collaborate(@cable, 'DocumentChannel', 'body')
+    cable = Cable.createConsumer "ws://localhost:28080"
+    @collaborate = new Collaborate(cable, 'DocumentChannel', 1)
     @collaborativeAttribute = @collaborate.addAttribute('body')
+
+  it "should throw an error if I don't pass an attribute", =>
+    expect =>
+      new Collaborate.CollaborativeAttribute(@collaborate)
+    .toThrow(new Error('You must specify an attribute to collaboratively edit'))
 
   it 'should start in the synchronized state', =>
     expect(@collaborativeAttribute.state).toEqual(jasmine.any(Collaborate.CollaborativeAttribute.Synchronized))

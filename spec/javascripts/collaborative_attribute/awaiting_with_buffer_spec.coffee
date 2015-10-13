@@ -2,8 +2,8 @@
 
 describe 'CollaborativeAttribute.AwaitingWithBuffer', ->
   beforeEach =>
-    @cable = Cable.createConsumer "ws://localhost:28080"
-    @collaborate = new Collaborate(@cable, 'DocumentChannel', 'body')
+    cable = Cable.createConsumer "ws://localhost:28080"
+    @collaborate = new Collaborate(cable, 'DocumentChannel', 1)
 
     @collaborativeAttribute = @collaborate.addAttribute('body')
     @attributeCable = @collaborativeAttribute.cable
