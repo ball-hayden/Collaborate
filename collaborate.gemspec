@@ -9,9 +9,8 @@ Gem::Specification.new do |s|
   s.version     = Collaborate::VERSION
   s.authors     = ['Hayden Ball']
   s.email       = ['hayden@haydenball.me.uk']
-  s.homepage    = 'TODO'
-  s.summary     = 'TODO: Summary of Collaborate.'
-  s.description = 'TODO: Description of Collaborate.'
+  s.homepage    = 'https://github.com/ball-hayden/Collaborate'
+  s.summary     = 'A Rails gem for real-time collaboration using ActionCable'
   s.license     = 'MIT'
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
