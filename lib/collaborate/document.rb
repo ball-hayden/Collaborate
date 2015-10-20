@@ -54,6 +54,19 @@ module Collaborate
       collaborative_attribute(attribute).apply_operation(operation, version)
     end
 
+    def commit_collaborative_attributes(*attributes)
+      attributes.map!(&:to_s)
+
+      # Intersect with allowed attributes
+      attributes &= self.class.collaborative_attributes
+
+      attributes.each do |attribute|
+        send("#{attribute}=", send("collaborative_#{attribute}"))
+      end
+
+      save
+    end
+
     def clear_collaborative_cache(attribute)
       collaborative_attribute(attribute).clear_cache
     end

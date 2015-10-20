@@ -49,6 +49,12 @@ cache. You must save these attributes where appropriate:
 document = Document.first
 document.body = document.collaborative_body
 document.save!
+
+# Or, using the commit_collaborative_attributes convenience method:
+
+document.commit_collaborative_attributes(:body)
+document.commit_collaborative_attributes(:body, :title)
+
 ```
 
 ### Channel Setup
