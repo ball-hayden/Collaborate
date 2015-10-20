@@ -55,7 +55,7 @@ module Collaborate
     end
 
     def commit_collaborative_attributes(*attributes)
-      attributes.map!(&:to_s)
+      attributes = attributes.flatten.map(&:to_s)
 
       # Intersect with allowed attributes
       attributes &= self.class.collaborative_attributes

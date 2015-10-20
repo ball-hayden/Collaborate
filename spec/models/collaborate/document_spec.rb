@@ -48,6 +48,16 @@ module Collaborate
       expect(example_instance.body).to eq 'A test body'
     end
 
+    it 'should allow me to pass an array to commit_collaborative_attributes' do
+      example_instance.collaborative_body = 'A test body'
+
+      expect(example_instance.commit_collaborative_attributes([:body])).to eq true
+
+      example_instance.reload
+
+      expect(example_instance.body).to eq 'A test body'
+    end
+
     it 'should allow me to apply an OT operation to an attribute' do
       example_instance.apply_operation(
         version: 1,
