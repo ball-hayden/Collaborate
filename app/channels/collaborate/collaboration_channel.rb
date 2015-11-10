@@ -9,25 +9,29 @@ module Collaborate
       transmit action: 'subscribed', client_id: client_id
     end
 
-    # Set the document this client is working on
+    # Subscribe to changes to a document
     def document(data)
-      @document = document_type.find(data['id'])
+      document = document_type.find(data['id'])
 
-      send_attribute_versions
+      @documents ||= []
+      @documents << document
 
-      stream_from "collaborate.documents.#{@document.id}.operations"
+      send_attribute_versions(document)
+
+      stream_from "collaborate.documents.#{document.id}.operations"
     end
 
     def operation(data)
       data = ActiveSupport::HashWithIndifferentAccess.new(data)
+      document = document_type.find(data[:document_id])
 
-      version, operation = @document.apply_operation(data)
+      version, operation = document.apply_operation(data)
 
       data[:sent_version] = data[:version]
       data[:version] = version
       data[:operation] = operation.to_a
 
-      ActionCable.server.broadcast "collaborate.documents.#{@document.id}.operations", data
+      ActionCable.server.broadcast "collaborate.documents.#{document.id}.operations", data
     end
 
     private
@@ -37,11 +41,16 @@ module Collaborate
     end
 
     # Send out initial versions
-    def send_attribute_versions
+    def send_attribute_versions(document)
       document_type.collaborative_attributes.each do |attribute_name|
-        attribute = @document.collaborative_attribute(attribute_name)
+        attribute = document.collaborative_attribute(attribute_name)
 
-        transmit action: 'attribute', attribute: attribute_name, version: attribute.version
+        transmit(
+          document_id: document.id,
+          action: 'attribute',
+          attribute: attribute_name,
+          version: attribute.version
+        )
       end
     end
   end

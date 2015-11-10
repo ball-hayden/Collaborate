@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'redis'
 
 module Collaborate
   RSpec.describe CollaborationChannel do
@@ -25,8 +26,8 @@ module Collaborate
     it 'should inform a client of current attribute versions when subscribing to a document' do
       allow_any_instance_of(DocumentAttribute).to receive(:version).and_return(2)
 
-      expect(channel).to receive(:transmit).with(action: 'attribute', attribute: 'body', version: 2)
-      expect(channel).to receive(:transmit).with(action: 'attribute', attribute: 'title', version: 2)
+      expect(channel).to receive(:transmit).with(document_id: example_document.id, action: 'attribute', attribute: 'body', version: 2)
+      expect(channel).to receive(:transmit).with(document_id: example_document.id, action: 'attribute', attribute: 'title', version: 2)
 
       channel.document('id' => example_document.id)
     end
@@ -37,11 +38,12 @@ module Collaborate
       expect_any_instance_of(Redis).to receive(:publish)
         .with(
           "collaborate.documents.#{example_document.id}.operations",
-          '{"version":1,"attribute":"body","operation":["test"],"sent_version":1}'
+          "{\"version\":1,\"document_id\":#{example_document.id},\"attribute\":\"body\",\"operation\":[\"test\"],\"sent_version\":1}"
         )
 
       channel.operation(
         'version' => 1,
+        'document_id' => example_document.id,
         'attribute' => 'body',
         'operation' => ['test']
       )

@@ -28,14 +28,14 @@ describe 'Collaborate.Cable', ->
       it "should warn if the attribute hasn't been registered", =>
         spyOn(console, 'warn')
 
-        @collaborateCable.received(action: 'attribute', attribute: 'title')
+        @collaborateCable.received(document_id: 1, action: 'attribute', attribute: 'title')
 
         expect(console.warn).toHaveBeenCalled()
 
       it 'should delegate to the attribute cable', =>
         spyOn(@collaborativeAttribute.cable, 'receiveAttribute')
 
-        @collaborateCable.received(action: 'attribute', attribute: 'body')
+        @collaborateCable.received(document_id: 1, action: 'attribute', attribute: 'body')
 
         expect(@collaborativeAttribute.cable.receiveAttribute).toHaveBeenCalled()
 
@@ -43,14 +43,14 @@ describe 'Collaborate.Cable', ->
       it "should warn if the attribute hasn't been registered", =>
         spyOn(console, 'warn')
 
-        @collaborateCable.received(action: 'operation', attribute: 'title')
+        @collaborateCable.received(document_id: 1, action: 'operation', attribute: 'title')
 
         expect(console.warn).toHaveBeenCalled()
 
       it 'should delegate to the attribute cable', =>
         spyOn(@collaborativeAttribute.cable, 'receiveOperation')
 
-        @collaborateCable.received(action: 'operation', attribute: 'body')
+        @collaborateCable.received(document_id: 1, action: 'operation', attribute: 'body')
 
         expect(@collaborativeAttribute.cable.receiveOperation).toHaveBeenCalled()
 

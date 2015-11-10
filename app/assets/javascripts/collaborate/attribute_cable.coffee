@@ -1,9 +1,8 @@
 Collaborate.AttributeCable = class Cable
-  unackedOps: []
-
-  version: 0
-
   constructor: (@collaborativeAttribute, @cable, @attribute) ->
+    @unackedOps = []
+    @version = 0
+
     @cable.addAttribute(@attribute, @)
 
   receiveAttribute: (data) =>

@@ -1,11 +1,13 @@
 Collaborate.Cable = class Cable
-  unackedOps: []
-  attributeCables: {}
-
   constructor: (@collaborate, cable, channel) ->
-    @subscription = cable.subscriptions.create channel,
+    @unackedOps = []
+    @attributeCables = {}
+    @documentId = @collaborate.documentId
+
+    @subscription = cable.subscriptions.create { channel: channel, documentId: @documentId },
       connected: @connected
       received: @received
+
 
   addAttribute: (attribute, attributeCable) =>
     @attributeCables[attribute] = attributeCable
@@ -14,9 +16,9 @@ Collaborate.Cable = class Cable
     # This shouldn't be necessary, but ActionCable doesn't seem to be able
     # to cope with finding the session immediately yet.
     setTimeout =>
-      @subscription.perform 'document', { id: @collaborate.documentId }
+      @subscription.perform 'document', { id: @documentId }
       console.info 'Document Setup Complete'
-    , 1000
+    , 200
 
   received: (data) =>
     switch data.action
@@ -32,6 +34,7 @@ Collaborate.Cable = class Cable
 
   sendOperation: (data) =>
     data.client_id = @clientId
+    data.document_id = @documentId
 
     @subscription.perform 'operation', data
 
@@ -41,6 +44,8 @@ Collaborate.Cable = class Cable
     console.debug "Set client ID as #{@clientId}"
 
   receiveAttribute: (data) =>
+    return unless data.document_id == @documentId
+
     attributeCable = @attributeCables[data.attribute]
 
     unless attributeCable
@@ -50,6 +55,8 @@ Collaborate.Cable = class Cable
     attributeCable.receiveAttribute(data)
 
   receiveOperation: (data) =>
+    return unless data.document_id == @documentId
+
     attributeCable = @attributeCables[data.attribute]
 
     unless attributeCable
