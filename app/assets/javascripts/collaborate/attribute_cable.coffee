@@ -5,6 +5,9 @@ Collaborate.AttributeCable = class Cable
 
     @cable.addAttribute(@attribute, @)
 
+  destroy: =>
+    @cable.removeAttribute(@attribute)
+
   receiveAttribute: (data) =>
     @version = data.version
 

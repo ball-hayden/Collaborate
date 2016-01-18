@@ -92,3 +92,11 @@ describe 'Collaborate.AttributeCable', ->
       @attributeCable.receiveRemoteOperation(@data)
 
       expect(@collaborativeAttribute.remoteOperation).toHaveBeenCalled()
+
+  describe 'destroy', =>
+    it 'should remove itself from the cable attributes list', =>
+      expect(Object.keys(@cable.attributeCables)).toContain('body')
+
+      @attributeCable.destroy()
+
+      expect(Object.keys(@cable.attributeCables)).not.toContain('body')

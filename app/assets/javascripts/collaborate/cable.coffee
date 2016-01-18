@@ -8,9 +8,14 @@ Collaborate.Cable = class Cable
       connected: @connected
       received: @received
 
+  destroy: =>
+    @subscription.unsubscribe()
 
   addAttribute: (attribute, attributeCable) =>
     @attributeCables[attribute] = attributeCable
+
+  removeAttribute: (attribute) =>
+    delete @attributeCables[attribute]
 
   connected: =>
     # This shouldn't be necessary, but ActionCable doesn't seem to be able

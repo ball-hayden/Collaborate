@@ -53,3 +53,11 @@ describe 'CollaborativeAttribute', ->
     @collaborativeAttribute.receiveAck(operation)
 
     expect(@collaborativeAttribute.state.receiveAck).toHaveBeenCalled()
+
+  describe 'destroy', =>
+    it 'should destroy the attribute cable', =>
+      spyOn(@collaborativeAttribute.cable, 'destroy')
+
+      @collaborativeAttribute.destroy()
+
+      expect(@collaborativeAttribute.cable.destroy).toHaveBeenCalled()

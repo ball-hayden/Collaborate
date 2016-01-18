@@ -9,6 +9,9 @@ Collaborate.CollaborativeAttribute = class CollaborativeAttribute
 
     @state = new CollaborativeAttribute.Synchronized(this)
 
+  destroy: =>
+    @cable.destroy()
+
   localOperation: (operation) =>
     return if operation.isNoop()
 
