@@ -6,3 +6,9 @@ window.Collaborate = class Collaborate
 
   addAttribute: (attribute) =>
     @attributes[attribute] = new Collaborate.CollaborativeAttribute(@, attribute)
+
+  destroy: ->
+    for name, attribute of @attributes
+      attribute.destroy()
+
+    @cable.destroy()
